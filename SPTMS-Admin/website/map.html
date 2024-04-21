@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        .accordion {
+            background-color: #eee;
+            color: #444;
+            cursor: pointer;
+            
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 15px;
+            transition: 0.4s;
+        }
+
+        .active,
+        .accordion:hover {
+            background-color: #569856;
+        }
+
+        .panel {
+            padding: 0 18px;
+            display: none;
+            background-color: #ffffff;
+            overflow: hidden;
+        }
+    </style>
+
+
+
+
+
+
+
+
+
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <h2>Click On Your Route</h2>
+    <button class="accordion">Ahmedabad-Baroda</button>
+    <div class="panel">
+        <table border="1">
+            <tr>
+                <td>Bus Number</td>
+                <td>Rout</td>
+                <td>Vaccant Seats</td>
+                <td>Occupied Seats</td>
+                <td>Total Seats</td>
+                <td>map......................................................................................................................................
+                </td>
+            </tr>
+            <tr>
+                <td>Rout1_1</td>
+                <td>Ahmedabad-Baroda(0600-0800)</td>
+                <td>
+                    <div id="list">
+                        <span id="insert1"></span>
+                    </div>
+                </td>
+                <td>
+                    <div id="list">
+                        <span id="insert"></span>
+                    </div>
+                </td>
+                <td>55</td>
+                <td>
+                    <button class="accordion">view map</button>
+                    <div class="panel">
+                        <!DOCTYPE html>
+                        <html xmlns="http://www.w3.org/1999/xhtml">
+
+                        <head runat="server">
+                            <title>Bus Location &amp; Details</title>
+                            <style type="text/css">
+                                html {
+                                    height: 100%
+                                }
+
+                                body {
+                                    height: 100%;
+                                    margin: 0;
+                                    padding: 0
+                                }
+
+                                #map_canvas {
+                                    height: 100%
+                                }
+                            </style>
+                            <script type="text/javascript"
+                                src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAqP0rM-ecP-sHKXv9uAI2yJICW67S5-hU">
+                                </script>
+                            <script>
+                                setInterval(function () {
+                                    document.getElementById("insert").innerHTML = '<iframe src="occupied.txt" frameborder="0" height="50" width="15%"></iframe>';
+                                    document.getElementById("insert1").innerHTML = '<iframe src="vaccant.txt" frameborder="0" height="50" width="15%"></iframe>';
+                                }, 2000);
+                                $(document).ready(function () {
+                                    $.getJSON("gps.json", function (data) {
+                                        var lat; var lng;
+                                        $.each(data, function (key, value) {
+                                            lat = value.lat;
+                                            lng = value.lon;
+                                            console.log(lat);
+                                            console.log(lng);
+                                            function initialize() {
+                                                var myLatlng = new google.maps.LatLng(lat, lng);
+                                                var myOptions = {
+                                                    zoom: 14,
+                                                    center: myLatlng,
+                                                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                                                }
+                                                map = new google.maps.Map(document.getElementById("gmap"), myOptions);
+                                                // marker refers to a global variable
+                                                marker = new google.maps.Marker({
+                                                    position: myLatlng,
+                                                    map: map
+                                                });
+                                                // if center changed then update lat and lon document objects
+                                                google.maps.event.addListener(map, 'center_changed', function () {
+                                                    var location = map.getCenter();
+                                                    document.getElementById("lat").innerHTML = location.lat();
+                                                    document.getElementById("lon").innerHTML = location.lng();
+                                                    // call function to reposition marker location
+                                                    placeMarker(location);
+                                                });
+                                                // if zoom changed, then update document object with new info
+                                                google.maps.event.addListener(map, 'zoom_changed', function () {
+                                                    zoomLevel = map.getZoom();
+                                                    document.getElementById("zoom_level").innerHTML = zoomLevel;
+                                                });
+                                                // double click on the marker changes zoom level
+                                                google.maps.event.addListener(marker, 'dblclick', function () {
+                                                    zoomLevel = map.getZoom() + 1;
+                                                    if (zoomLevel == 20) {
+                                                        zoomLevel = 10;
+                                                    }
+                                                    document.getElementById("zoom_level").innerHTML = zoomLevel;
+                                                    map.setZoom(zoomLevel);
+                                                });
+                                                function placeMarker(location) {
+                                                    var clickedLocation = new google.maps.LatLng(location);
+                                                    marker.setPosition(location);
+                                                }
+                                                
+                                            }
+                                            window.onload = function () { initialize() }
+
+                                        });
+                                    });
+                                });
+                            </script>
+                            <style>
+                                div#gmap {
+                                    width: 80%;
+                                    height: 500px;
+                                    border: double;
+                                }
+                            </style>
+                        </head>
+
+                        <body>
+                            <form id="form1" runat="server">
+                                <center>
+                                    <!-- MAP HOLDER -->
+                                    <div id="gmap"></div>
+                                    <!-- REFERENCES -->
+                                </center>
+                            </form>
+                        </body>
+
+                        </html>
+                    </div>
+                    <button class="accordion">view cordinates</button>
+                    <div class="panel">
+                        <p><iframe src="lat.txt" frameborder="0" height="70px" width:auto></iframe>,
+                            <iframe src="long.txt" frameborder="0" height="70px" width:auto></iframe>
+                        </p>
+                </td>
+            </tr>
+            <tr>
+                <td>Rout1_1</td>
+                <td>Ahmedabad-Baroda(1100-1300)</td>
+                <td>20</td>
+                <td>35</td>
+                <td>55</td>
+            </tr>
+            <tr>
+                <td>Rout1_1</td>
+                <td>Ahmedabad-Baroda(1400-1600)</td>
+                <td>20</td>
+                <td>35</td>
+                <td>55</td>
+            </tr>
+            <tr>
+                <td>Rout1_1</td>
+                <td>Ahmedabad-Baroda(1800-2030)</td>
+                <td>20</td>
+                <td>35</td>
+                <td>55</td>
+            </tr>
+        </table>
+    </div>
+    <button class="accordion">Ahmedabad-Mehsana</button>
+    <div class="panel">
+        <table border="1">
+            <tr>
+                <td>Bus Number</td>
+                <td>Rout</td>
+                <td>Vaccant Seats</td>
+                <td>Occupied Seats</td>
+                <td>Total Seats</td>
+            </tr>
+            <tr>
+                <td>Rout2_1</td>
+                <td>Ahmedabad-Mehsana(0600-0830)</td>
+                <td>20</td>
+                <td>35</td>
+                <td>55</td>
+            </tr>
+            <tr>
+                <td>Rout2_2</td>
+                <td>Ahmedabad-Mehsana(0800-1000)</td>
+                <td>20</td>
+                <td>35</td>
+                <td>55</td>
+            </tr>
+            <tr>
+                <td>Rout2_3</td>
+                <td>Ahmedabad-Mehsana(1000-1230)</td>
+                <td>20</td>
+                <td>35</td>
+                <td>55</td>
+            </tr>
+            <tr>
+                <td>Rout2_4</td>
+                <td>Ahmedabad-Mehsana(1300-1400)</td>
+                <td>20</td>
+                <td>35</td>
+                <td>55</td>
+            </tr>
+            <tr>
+                <td>Rout2_4</td>
+                <td>Ahmedabad-Mehsana(1400-1630)</td>
+                <td>20</td>
+                <td>35</td>
+                <td>55</td>
+            </tr>
+        </table>
+        <br><br>
+    </div>
+    <button class="accordion">Baroda-Bhuj</button>
+    <div class="panel">
+        <table border="1">
+            <tr>
+                <td>Bus Number</td>
+                <td>Rout</td>
+                <td>Vaccant Seats</td>
+                <td>Occupied Seats</td>
+                <td>Total Seats</td>
+            </tr>
+            <tr>
+                <td>Rout3_1</td>
+                <td>Baroda-Bhuj(0600-1800)</td>
+                <td>20</td>
+                <td>35</td>
+                <td>55</td>
+            </tr>
+            <tr>
+                <td>Rout3_2</td>
+                <td>Baroda-Bhuj(0200-1400)</td>
+                <td>20</td>
+                <td>35</td>
+                <td>55</td>
+            </tr>
+            <tr>
+                <td>Rout3_3</td>
+                <td>Baroda-Bhuj(1000-2330)</td>
+                <td>20</td>
+                <td>35</td>
+                <td>55</td>
+            </tr>
+            <tr>
+                <td>Rout3_4</td>
+                <td>Baroda-Bhuj(1600-0300)</td>
+                <td>20</td>
+                <td>35</td>
+                <td>55</td>
+            </tr>
+            <tr>
+                <td>Rout3_5</td>
+                <td>Baroda-Bhuj(2300-1600)</td>
+                <td>20</td>
+                <td>35</td>
+                <td>55</td>
+            </tr>
+        </table>
+    </div>
+    <script>
+        var acc = document.getElementsByClassName("accordion");
+        var i;
+        for (i = 0; i < acc.length; i++) 
+        {  console.log(acc.length);
+             acc[i].addEventListener("click", function () {
+                this.classList.toggle("active");
+                var panel = this.nextElementSibling;
+                if (panel.style.display === "block") {
+                    panel.style.display = "none";
+                } else {
+                    panel.style.display = "block";
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

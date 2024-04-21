@@ -1,0 +1,9 @@
+cd desktop/sptms
+python -m SimpleHTTPServer
+
+cd desktop/sptms
+python3 ./gps_python.py
+
+
+
+ python3 -m http.server 9000 
